@@ -37,3 +37,28 @@
 .VPButton.brand:hover {
   box-shadow: 0 0 24px 4px hsl(189 95% 43% / 0.5);
 }
+
+/* Уменьшаю огромный hero-логотип — VitePress по умолчанию делает его 320px+ */
+.VPHero .image-bg {
+  width: 160px !important;
+  height: 160px !important;
+}
+.VPHero .image-container {
+  width: 160px !important;
+  height: 160px !important;
+  transform: none;
+}
+.VPHero .image-src {
+  max-width: 120px;
+  max-height: 120px;
+}
+
+/* Чуть компактнее hero на десктопе */
+@media (min-width: 960px) {
+  .VPHero {
+    padding-block: 48px 32px;
+  }
+  .VPHero .container {
+    gap: 32px;
+  }
+}

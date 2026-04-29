@@ -49,6 +49,14 @@ export default defineConfig({
         text: 'Модели',
         link: '/models/',
         collapsed: false,
+        items: [
+          { text: 'Все модели', link: '/models/' },
+          { text: 'Nano Banana 2 (T2I)', link: '/models/nano-banana-2' },
+          { text: 'Nano Banana 2 Edit', link: '/models/nano-banana-2-edit' },
+          { text: 'Nano Banana Pro', link: '/models/nano-banana-pro' },
+          { text: 'GPT Image 2 (T2I)', link: '/models/gpt-image-2' },
+          { text: 'GPT Image 2 Edit', link: '/models/gpt-image-2-edit' },
+        ],
       },
     ],
 
