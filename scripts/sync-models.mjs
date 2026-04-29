@@ -90,8 +90,10 @@ function generateMdx(slug, model, kb) {
   const tagline = kb?.tagline ?? model.name ?? slug;
   const description = `${tagline}. Генерация через Createya API — без VPN, оплата в рублях. ${seo}.`;
 
-  const pricing = model.pricing
-    ? `**Стоимость:** ${model.pricing.base_credits} кредитов / запрос${model.pricing.description ? ` (${model.pricing.description})` : ''}.`
+  const typicalCredits = model.pricing?.typical_price ?? model.pricing?.base_credits ?? model.credits_per_request;
+  const pricingDesc = model.pricing?.human_description ?? model.pricing?.description ?? '';
+  const pricing = typicalCredits
+    ? `**Стоимость:** ${typicalCredits} кредитов / запрос${pricingDesc ? ` (${pricingDesc})` : ''}.`
     : '';
 
   return `---
