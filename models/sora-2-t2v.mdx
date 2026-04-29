@@ -1,0 +1,88 @@
+---
+title: 2
+description: 2. Генерация через Createya API — без VPN, оплата в рублях. Sora 2 API, OpenAI Sora генерация видео в России.
+sidebar:
+  label: 2
+---
+
+# 2
+
+> 2
+
+**Стоимость:** 48 кредитов / запрос (12кр/сек · 4–12 сек).
+
+**Family slug:** `sora` · **Output:** video · **Mode:** sync
+
+
+
+## Быстрый старт
+
+### curl
+
+```bash
+curl -X POST https://api.createya.ai/v1/run \
+  -H "Authorization: Bearer $CREATEYA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sora-2-t2v",
+    "input": {
+      "prompt": "your prompt"
+    }
+  }'
+```
+
+### Python
+
+```python
+import os, requests
+KEY = os.environ["CREATEYA_API_KEY"]
+r = requests.post(
+    "https://api.createya.ai/v1/run",
+    headers={"Authorization": f"Bearer {KEY}"},
+    json={"model": "sora-2-t2v", "input": {"prompt": "your prompt"}}
+)
+print(r.json())
+```
+
+### Node.js
+
+```javascript
+const r = await fetch("https://api.createya.ai/v1/run", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${process.env.CREATEYA_API_KEY}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "sora-2-t2v",
+    input: { prompt: "your prompt" }
+  })
+});
+console.log(await r.json());
+```
+
+## Параметры
+
+| Параметр | Тип | Required | Описание |
+|---|---|---|---|
+| `resolution` | enum |  | Разрешение генерируемого видео |
+| `aspect_ratio` | enum |  | Соотношение сторон генерируемого видео |
+| `duration` | integer |  | Длительность генерируемого видео в секундах |
+| `model` | enum |  | Модель для генерации. При выборе модели по умолчанию используется последняя версия (snapshot), в противном случае выберите конкретную версию модели. |
+| `delete_video` | boolean |  | Удалять ли видео после генерации в целях конфиденциальности. Если выбрано значение True, видео нельзя будет использовать для ремиксов, и оно будет безвозвратно удалено. |
+| `detect_and_block_ip` | boolean |  | Если включено, промпт (и изображение для image-to-video) будут проверяться на наличие известных объектов интеллектуальной собственности, и запрос будет заблокирован при их обнаружении. |
+
+## Похожие модели
+
+См. [полный каталог](/models/) или [createya.ai/knowledge](https://createya.ai/knowledge).
+
+## Через MCP
+
+```
+createya:run_model({
+  model: "sora-2-t2v",
+  input: { prompt: "your prompt" }
+})
+```
+
+См. [MCP Integration](/mcp/overview/) для подключения к Claude / Cursor / Cline.

@@ -1,0 +1,87 @@
+---
+title: v1.0
+description: v1.0. Генерация через Createya API — без VPN, оплата в рублях. AI генерация изображений, AI генерация видео, без VPN, в рублях.
+sidebar:
+  label: v1.0
+---
+
+# v1.0
+
+> v1.0
+
+**Стоимость:** 170 кредитов / запрос (duration: 102–510кр (13 вариантов); resolution: 720p=85кр, 1080p=170кр).
+
+**Family slug:** `happy` · **Output:** video · **Mode:** sync
+
+
+
+## Быстрый старт
+
+### curl
+
+```bash
+curl -X POST https://api.createya.ai/v1/run \
+  -H "Authorization: Bearer $CREATEYA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "happy-horse-t2v",
+    "input": {
+      "prompt": "your prompt"
+    }
+  }'
+```
+
+### Python
+
+```python
+import os, requests
+KEY = os.environ["CREATEYA_API_KEY"]
+r = requests.post(
+    "https://api.createya.ai/v1/run",
+    headers={"Authorization": f"Bearer {KEY}"},
+    json={"model": "happy-horse-t2v", "input": {"prompt": "your prompt"}}
+)
+print(r.json())
+```
+
+### Node.js
+
+```javascript
+const r = await fetch("https://api.createya.ai/v1/run", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${process.env.CREATEYA_API_KEY}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "happy-horse-t2v",
+    input: { prompt: "your prompt" }
+  })
+});
+console.log(await r.json());
+```
+
+## Параметры
+
+| Параметр | Тип | Required | Описание |
+|---|---|---|---|
+| `aspect_ratio` | enum |  | Соотношение сторон генерируемого видео. |
+| `resolution` | enum |  | Уровень разрешения выходного видео. |
+| `duration` | enum |  | Длительность выходного видео в секундах (3-15). |
+| `seed` | integer |  | Случайное число (seed) для воспроизводимости (0-2147483647). |
+| `enable_safety_checker` | boolean |  | Включить модерацию контента для входных и выходных данных. |
+
+## Похожие модели
+
+См. [полный каталог](/models/) или [createya.ai/knowledge](https://createya.ai/knowledge).
+
+## Через MCP
+
+```
+createya:run_model({
+  model: "happy-horse-t2v",
+  input: { prompt: "your prompt" }
+})
+```
+
+См. [MCP Integration](/mcp/overview/) для подключения к Claude / Cursor / Cline.

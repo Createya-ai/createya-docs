@@ -1,0 +1,88 @@
+---
+title: V5 Lite
+description: V5 Lite. Генерация через Createya API — без VPN, оплата в рублях. AI генерация изображений, AI генерация видео, без VPN, в рублях.
+sidebar:
+  label: V5 Lite
+---
+
+# V5 Lite
+
+> V5 Lite
+
+**Стоимость:** 5 кредитов / запрос (× num_images (1–6)).
+
+**Family slug:** `seedream` · **Output:** image · **Mode:** sync
+
+
+
+## Быстрый старт
+
+### curl
+
+```bash
+curl -X POST https://api.createya.ai/v1/run \
+  -H "Authorization: Bearer $CREATEYA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "seedream-v5-lite-t2i",
+    "input": {
+      "prompt": "your prompt"
+    }
+  }'
+```
+
+### Python
+
+```python
+import os, requests
+KEY = os.environ["CREATEYA_API_KEY"]
+r = requests.post(
+    "https://api.createya.ai/v1/run",
+    headers={"Authorization": f"Bearer {KEY}"},
+    json={"model": "seedream-v5-lite-t2i", "input": {"prompt": "your prompt"}}
+)
+print(r.json())
+```
+
+### Node.js
+
+```javascript
+const r = await fetch("https://api.createya.ai/v1/run", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${process.env.CREATEYA_API_KEY}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "seedream-v5-lite-t2i",
+    input: { prompt: "your prompt" }
+  })
+});
+console.log(await r.json());
+```
+
+## Параметры
+
+| Параметр | Тип | Required | Описание |
+|---|---|---|---|
+| `num_images` | integer |  | Количество отдельных генераций модели, которые будут запущены с данным промптом. |
+| `image_size` | enum |  | Размер генерируемого изображения. Общее количество пикселей должно быть в диапазоне от 2560x1440 до 3072x3072. Если размер изображения не входит в эти параметры, он будет скорректирован путем масштабирования. |
+| `width` | integer |  | Ширина изображения в пикселях |
+| `height` | integer |  | Высота изображения в пикселях |
+| `enable_safety_checker` | boolean |  | Если выбрано значение true, фильтр безопасности будет включен. |
+| `max_images` | integer |  | Если установлено число больше единицы, включается генерация нескольких изображений. Модель может возвращать до `max_images` изображений за каждую генерацию, и всего будет выполнено `num_images` генераций. Общее количество созданных изображений составит от `num_images` до `max_images*num_images`. |
+
+## Похожие модели
+
+См. [полный каталог](/models/) или [createya.ai/knowledge](https://createya.ai/knowledge).
+
+## Через MCP
+
+```
+createya:run_model({
+  model: "seedream-v5-lite-t2i",
+  input: { prompt: "your prompt" }
+})
+```
+
+См. [MCP Integration](/mcp/overview/) для подключения к Claude / Cursor / Cline.

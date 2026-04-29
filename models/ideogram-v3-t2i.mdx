@@ -1,0 +1,91 @@
+---
+title: v3
+description: v3. Генерация через Createya API — без VPN, оплата в рублях. AI генерация изображений, AI генерация видео, без VPN, в рублях.
+sidebar:
+  label: v3
+---
+
+# v3
+
+> v3
+
+**Стоимость:** 8 кредитов / запрос (rendering_speed: TURBO=4кр, BALANCED=8кр, QUALITY=12кр; × num_images (1–8)).
+
+**Family slug:** `ideogram` · **Output:** image · **Mode:** sync
+
+
+
+## Быстрый старт
+
+### curl
+
+```bash
+curl -X POST https://api.createya.ai/v1/run \
+  -H "Authorization: Bearer $CREATEYA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "ideogram-v3-t2i",
+    "input": {
+      "prompt": "your prompt"
+    }
+  }'
+```
+
+### Python
+
+```python
+import os, requests
+KEY = os.environ["CREATEYA_API_KEY"]
+r = requests.post(
+    "https://api.createya.ai/v1/run",
+    headers={"Authorization": f"Bearer {KEY}"},
+    json={"model": "ideogram-v3-t2i", "input": {"prompt": "your prompt"}}
+)
+print(r.json())
+```
+
+### Node.js
+
+```javascript
+const r = await fetch("https://api.createya.ai/v1/run", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${process.env.CREATEYA_API_KEY}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "ideogram-v3-t2i",
+    input: { prompt: "your prompt" }
+  })
+});
+console.log(await r.json());
+```
+
+## Параметры
+
+| Параметр | Тип | Required | Описание |
+|---|---|---|---|
+| `num_images` | integer |  | Количество изображений для генерации. |
+| `image_size` | enum |  | Разрешение генерируемого изображения |
+| `width` | integer |  | Ширина изображения в пикселях |
+| `height` | integer |  | Высота изображения в пикселях |
+| `style` | enum |  | Тип стиля для генерации.  |
+| `style_preset` | enum |  | Пресет стиля для генерации. Выбранный пресет будет направлять процесс генерации. |
+| `expand_prompt` | boolean |  | Определяет, следует ли использовать MagicPrompt при создании запроса. |
+| `rendering_speed` | enum |  | Используемая скорость рендеринга. Ваш запрос будет стоить 4кр с TURBO,  8кр  с СБАЛАНСИРОВАННЫМ, 11кр с КАЧЕСТВОМ. |
+| `seed` | integer |  | Сид (seed) для генератора случайных чисел |
+
+## Похожие модели
+
+См. [полный каталог](/models/) или [createya.ai/knowledge](https://createya.ai/knowledge).
+
+## Через MCP
+
+```
+createya:run_model({
+  model: "ideogram-v3-t2i",
+  input: { prompt: "your prompt" }
+})
+```
+
+См. [MCP Integration](/mcp/overview/) для подключения к Claude / Cursor / Cline.

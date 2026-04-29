@@ -1,0 +1,85 @@
+---
+title: Gen4
+description: Gen4. Генерация через Createya API — без VPN, оплата в рублях. AI генерация изображений, AI генерация видео, без VPN, в рублях.
+sidebar:
+  label: Gen4
+---
+
+# Gen4
+
+> Gen4
+
+**Стоимость:** 10 кредитов / запрос (resolution: 720p=6кр, 1080p=10кр).
+
+**Family slug:** `runway` · **Output:** image · **Mode:** sync
+
+
+
+## Быстрый старт
+
+### curl
+
+```bash
+curl -X POST https://api.createya.ai/v1/run \
+  -H "Authorization: Bearer $CREATEYA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "runway-gen4-t2i",
+    "input": {
+      "prompt": "your prompt"
+    }
+  }'
+```
+
+### Python
+
+```python
+import os, requests
+KEY = os.environ["CREATEYA_API_KEY"]
+r = requests.post(
+    "https://api.createya.ai/v1/run",
+    headers={"Authorization": f"Bearer {KEY}"},
+    json={"model": "runway-gen4-t2i", "input": {"prompt": "your prompt"}}
+)
+print(r.json())
+```
+
+### Node.js
+
+```javascript
+const r = await fetch("https://api.createya.ai/v1/run", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${process.env.CREATEYA_API_KEY}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "runway-gen4-t2i",
+    input: { prompt: "your prompt" }
+  })
+});
+console.log(await r.json());
+```
+
+## Параметры
+
+| Параметр | Тип | Required | Описание |
+|---|---|---|---|
+| `aspect_ratio` | enum |  | The aspect ratio of the generated media. |
+| `resolution` | enum |  | The resolution of the generated media. |
+| `seed` | integer |  | The seed to use for the image generation. |
+
+## Похожие модели
+
+См. [полный каталог](/models/) или [createya.ai/knowledge](https://createya.ai/knowledge).
+
+## Через MCP
+
+```
+createya:run_model({
+  model: "runway-gen4-t2i",
+  input: { prompt: "your prompt" }
+})
+```
+
+См. [MCP Integration](/mcp/overview/) для подключения к Claude / Cursor / Cline.

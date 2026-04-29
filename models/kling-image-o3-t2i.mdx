@@ -1,0 +1,87 @@
+---
+title: 3
+description: 3. Генерация через Createya API — без VPN, оплата в рублях. AI генерация изображений, AI генерация видео, без VPN, в рублях.
+sidebar:
+  label: 3
+---
+
+# 3
+
+> 3
+
+**Стоимость:** 4 кредитов / запрос (resolution: 1K=4кр, 2K=4кр, 4K=8кр; × num_images (1–9)).
+
+**Family slug:** `kling` · **Output:** image · **Mode:** sync
+
+
+
+## Быстрый старт
+
+### curl
+
+```bash
+curl -X POST https://api.createya.ai/v1/run \
+  -H "Authorization: Bearer $CREATEYA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "kling-image-o3-t2i",
+    "input": {
+      "prompt": "your prompt"
+    }
+  }'
+```
+
+### Python
+
+```python
+import os, requests
+KEY = os.environ["CREATEYA_API_KEY"]
+r = requests.post(
+    "https://api.createya.ai/v1/run",
+    headers={"Authorization": f"Bearer {KEY}"},
+    json={"model": "kling-image-o3-t2i", "input": {"prompt": "your prompt"}}
+)
+print(r.json())
+```
+
+### Node.js
+
+```javascript
+const r = await fetch("https://api.createya.ai/v1/run", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${process.env.CREATEYA_API_KEY}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "kling-image-o3-t2i",
+    input: { prompt: "your prompt" }
+  })
+});
+console.log(await r.json());
+```
+
+## Параметры
+
+| Параметр | Тип | Required | Описание |
+|---|---|---|---|
+| `resolution` | enum |  | Разрешение генерации. 1K: стандартное, 2K: высокое, 4K: ультравысокое. |
+| `result_type` | enum |  | Тип результата. «single» для одного изображения, «series» для серии связанных изображений. |
+| `num_images` | integer |  | Количество изображений для генерации (1-9). Используется только если тип результата — «single». |
+| `aspect_ratio` | enum |  | Соотношение сторон генерируемых изображений. |
+| `output_format` | enum |  | Формат генерируемого изображения. |
+
+## Похожие модели
+
+См. [полный каталог](/models/) или [createya.ai/knowledge](https://createya.ai/knowledge).
+
+## Через MCP
+
+```
+createya:run_model({
+  model: "kling-image-o3-t2i",
+  input: { prompt: "your prompt" }
+})
+```
+
+См. [MCP Integration](/mcp/overview/) для подключения к Claude / Cursor / Cline.

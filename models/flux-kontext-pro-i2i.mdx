@@ -1,0 +1,89 @@
+---
+title: Kontext
+description: Kontext. Генерация через Createya API — без VPN, оплата в рублях. Flux 2 API на русском, генерация изображений Flux, Flux Kontext редактирование.
+sidebar:
+  label: Kontext
+---
+
+# Kontext
+
+> Kontext
+
+**Стоимость:** 5 кредитов / запрос (× num_images (1–4)).
+
+**Family slug:** `flux` · **Output:** image · **Mode:** sync
+
+
+
+## Быстрый старт
+
+### curl
+
+```bash
+curl -X POST https://api.createya.ai/v1/run \
+  -H "Authorization: Bearer $CREATEYA_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "flux-kontext-pro-i2i",
+    "input": {
+      "prompt": "your prompt"
+    }
+  }'
+```
+
+### Python
+
+```python
+import os, requests
+KEY = os.environ["CREATEYA_API_KEY"]
+r = requests.post(
+    "https://api.createya.ai/v1/run",
+    headers={"Authorization": f"Bearer {KEY}"},
+    json={"model": "flux-kontext-pro-i2i", "input": {"prompt": "your prompt"}}
+)
+print(r.json())
+```
+
+### Node.js
+
+```javascript
+const r = await fetch("https://api.createya.ai/v1/run", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${process.env.CREATEYA_API_KEY}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "flux-kontext-pro-i2i",
+    input: { prompt: "your prompt" }
+  })
+});
+console.log(await r.json());
+```
+
+## Параметры
+
+| Параметр | Тип | Required | Описание |
+|---|---|---|---|
+| `num_images` | integer |  | Сколько вариантов изображения будет сгенерировано за один запрос. |
+| `aspect_ratio` | enum |  | Определяет формат изображения: квадрат, вертикальный или горизонтальный. |
+| `output_format` | enum |  | Формат файла результата . |
+| `safety_tolerance` | enum |  | Уровень фильтрации контента. 1 — самый строгий, 5 — самый свободный. |
+| `guidance_scale` | number |  | Насколько строго модель следует промпту. Больше — точнее по тексту, меньше — более свободно и креативно. |
+| `seed` | integer |  | Одинаковый seed и одинаковый запрос для одной и той же версии модели всегда будут выдавать идентичное изображение. |
+| `enhance_prompt` | boolean |  | Автоматически улучшает и уточняет ваш запрос для более стабильного результата. |
+
+## Похожие модели
+
+См. [полный каталог](/models/) или [createya.ai/knowledge](https://createya.ai/knowledge).
+
+## Через MCP
+
+```
+createya:run_model({
+  model: "flux-kontext-pro-i2i",
+  input: { prompt: "your prompt" }
+})
+```
+
+См. [MCP Integration](/mcp/overview/) для подключения к Claude / Cursor / Cline.
