@@ -1,0 +1,84 @@
+name: Build & deploy docs.createya.ai
+
+# Триггеры:
+#   - Push в main → деплой
+#   - Cron каждый понедельник в 09:00 UTC → пересобирает каталог моделей и деплоит
+#   - workflow_dispatch → ручной запуск (например после изменения цен в админке)
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 9 * * 1'   # понедельник 09:00 UTC = 12:00 МСК
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Зачем триггерим (например "обновил цены")'
+        required: false
+        default: 'manual rebuild'
+
+permissions:
+  contents: write   # для коммита обновлённых docs/models/*.mdx
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    concurrency:
+      group: deploy-docs
+      cancel-in-progress: false   # не отменяем предыдущий деплой — лучше сериализовать
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync models from /v1/models
+        env:
+          CREATEYA_API_KEY: ${{ secrets.CREATEYA_API_KEY }}
+        run: npm run sync:models
+
+      - name: Commit updated model pages (if changed)
+        run: |
+          git config user.name "createya-docs-bot"
+          git config user.email "support@createya.ai"
+          if git diff --quiet src/content/docs/models/; then
+            echo "No model changes."
+          else
+            git add src/content/docs/models/
+            git commit -m "chore(sync): обновлён каталог моделей $(date +%Y-%m-%d)"
+            git push origin HEAD
+          fi
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Setup SSH for rsync
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_PROD_VM }}
+
+      - name: Add VM to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 158.160.200.216 >> ~/.ssh/known_hosts
+
+      - name: Rsync built site to PROD VM
+        run: |
+          rsync -avz --delete \
+            ./dist/ \
+            createya@158.160.200.216:/var/www/docs.createya.ai/
+
+      - name: Trigger nginx reload (optional, only if config changed)
+        if: false   # включить когда обновляется nginx config (вручную)
+        run: |
+          ssh createya@158.160.200.216 'sudo nginx -t && sudo systemctl reload nginx'
