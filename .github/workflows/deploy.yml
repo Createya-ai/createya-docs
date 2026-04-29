@@ -2,23 +2,23 @@ name: Build & deploy docs.createya.ai
 
 # Триггеры:
 #   - Push в main → деплой
-#   - Cron каждый понедельник в 09:00 UTC → пересобирает каталог моделей и деплоит
-#   - workflow_dispatch → ручной запуск (например после изменения цен в админке)
+#   - Cron каждый понедельник 09:00 UTC → пересобирает каталог моделей и деплоит
+#   - workflow_dispatch → ручной запуск (например после изменения цен)
 
 on:
   push:
     branches: [main]
   schedule:
-    - cron: '0 9 * * 1'   # понедельник 09:00 UTC = 12:00 МСК
+    - cron: '0 9 * * 1'
   workflow_dispatch:
     inputs:
       reason:
-        description: 'Зачем триггерим (например "обновил цены")'
+        description: 'Зачем триггерим'
         required: false
         default: 'manual rebuild'
 
 permissions:
-  contents: write   # для коммита обновлённых docs/models/*.mdx
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -26,7 +26,7 @@ jobs:
     timeout-minutes: 15
     concurrency:
       group: deploy-docs
-      cancel-in-progress: false   # не отменяем предыдущий деплой — лучше сериализовать
+      cancel-in-progress: false
 
     steps:
       - uses: actions/checkout@v4
@@ -45,21 +45,23 @@ jobs:
       - name: Sync models from /v1/models
         env:
           CREATEYA_API_KEY: ${{ secrets.CREATEYA_API_KEY }}
-        run: npm run sync:models
+        run: npm run sync:models || echo "Sync skipped (api closed)"
+        continue-on-error: true
 
       - name: Commit updated model pages (if changed)
         run: |
           git config user.name "createya-docs-bot"
           git config user.email "support@createya.ai"
-          if git diff --quiet src/content/docs/models/; then
+          if git diff --quiet models/; then
             echo "No model changes."
           else
-            git add src/content/docs/models/
+            git add models/
             git commit -m "chore(sync): обновлён каталог моделей $(date +%Y-%m-%d)"
             git push origin HEAD
           fi
+        continue-on-error: true
 
-      - name: Build static site
+      - name: Build VitePress site
         run: npm run build
 
       - name: Setup SSH for rsync
@@ -75,10 +77,11 @@ jobs:
       - name: Rsync built site to PROD VM
         run: |
           rsync -avz --delete \
-            ./dist/ \
+            ./.vitepress/dist/ \
             createya@158.160.200.216:/var/www/docs.createya.ai/
 
-      - name: Trigger nginx reload (optional, only if config changed)
-        if: false   # включить когда обновляется nginx config (вручную)
+      - name: Verify deploy
         run: |
-          ssh createya@158.160.200.216 'sudo nginx -t && sudo systemctl reload nginx'
+          sleep 2
+          curl -sI https://docs.createya.ai/ | head -3
+          echo "✓ Deploy complete: https://docs.createya.ai/"

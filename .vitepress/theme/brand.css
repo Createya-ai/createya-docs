@@ -1,0 +1,39 @@
+/* Createya brand override для VitePress */
+
+:root {
+  --vp-c-brand-1: hsl(189 95% 60%);   /* cyan, как primary */
+  --vp-c-brand-2: hsl(189 95% 53%);
+  --vp-c-brand-3: hsl(189 95% 43%);
+  --vp-c-brand-soft: hsl(189 95% 43% / 0.14);
+  --vp-c-bg: hsl(220 20% 6%);
+  --vp-c-bg-alt: hsl(220 22% 5%);
+  --vp-c-bg-soft: hsl(220 18% 10%);
+}
+
+.dark {
+  --vp-c-bg: hsl(220 20% 6%);
+  --vp-c-bg-alt: hsl(220 22% 5%);
+  --vp-c-bg-soft: hsl(220 18% 10%);
+  --vp-c-bg-elv: hsl(220 18% 12%);
+  --vp-c-border: hsl(220 15% 18%);
+  --vp-c-divider: hsl(220 15% 18%);
+  --vp-c-text-1: hsl(210 20% 95%);
+  --vp-c-text-2: hsl(210 20% 70%);
+  --vp-c-text-3: hsl(210 15% 50%);
+}
+
+/* Hero gradient */
+.VPHero .name {
+  background: linear-gradient(135deg, hsl(189 95% 60%), hsl(280 80% 65%));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Buttons глоу */
+.VPButton.brand {
+  box-shadow: 0 0 16px 2px hsl(189 95% 43% / 0.3);
+}
+.VPButton.brand:hover {
+  box-shadow: 0 0 24px 4px hsl(189 95% 43% / 0.5);
+}

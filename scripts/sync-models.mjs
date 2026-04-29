@@ -19,7 +19,7 @@ import path from 'node:path';
 
 const API_BASE = process.env.CREATEYA_API_BASE || 'https://api.createya.ai';
 const API_KEY = process.env.CREATEYA_API_KEY || '';
-const MODELS_DIR = 'src/content/docs/models';
+const MODELS_DIR = 'models';
 
 // KB-published модели с слоганами + категорией для главных карточек.
 // Можно переехать на запрос к knowledge_base через Supabase REST,
@@ -65,11 +65,16 @@ async function fetchModels() {
   if (API_KEY) headers['Authorization'] = `Bearer ${API_KEY}`;
 
   const r = await fetch(`${API_BASE}/v1/models`, { headers });
+  if (r.status === 401) {
+    console.warn('⚠ /v1/models requires auth (CRE-337 not fully deployed yet).');
+    console.warn('⚠ Skipping model page generation — site will build without per-model pages.');
+    console.warn('⚠ После открытия публичного /v1/models или с CREATEYA_API_KEY в secrets — модели подтянутся.');
+    return null;
+  }
   if (!r.ok) {
     throw new Error(`Failed to fetch /v1/models: ${r.status} ${await r.text()}`);
   }
   const json = await r.json();
-  // OpenAI-style ответ: { object: 'list', data: [...] }
   return Array.isArray(json) ? json : (json.data ?? []);
 }
 
@@ -186,8 +191,68 @@ function renderSchema(schema) {
   return lines.join('\n');
 }
 
+async function ensureMinimumIndex() {
+  // Если /models пустой — создаём заглушку чтобы Astro не падал на autogenerate
+  if (!existsSync(MODELS_DIR)) await mkdir(MODELS_DIR, { recursive: true });
+  const stub = `---
+title: Каталог моделей
+description: Полный каталог AI-моделей Createya — image и video генерация через единый API.
+sidebar:
+  label: Все модели
+---
+
+# Каталог моделей
+
+> ⚠️ Per-model страницы автоматически генерируются раз в неделю из live \`/v1/models\` каталога.
+> Сейчас идёт миграция API на публичный режим (CRE-337) — после её завершения этот раздел заполнится.
+
+Пока — актуальный каталог через REST:
+
+\`\`\`bash
+curl https://api.createya.ai/v1/models \\
+  -H "Authorization: Bearer crya_sk_live_..." | jq
+\`\`\`
+
+Или через MCP:
+
+\`\`\`
+createya:list_models()
+\`\`\`
+
+## Главные семейства моделей (image)
+
+- **FLUX** — Flux 2, Flux Kontext (топ-фотореализм)
+- **Nano Banana** — быстрая универсальная генерация
+- **GPT Image** — OpenAI flagship
+- **Kling Image** — photorealism + люди
+- **Higgsfield Soul** — кинематограф
+- **Midjourney** — художественный стиль
+- **Runway Gen-4** — кинопродакшн
+
+## Главные семейства моделей (video)
+
+- **Sora 2** — OpenAI flagship
+- **Veo 3.1** / **Veo 3.1 Fast** — Google flagship
+- **Kling Video** — O3 / V3 / 4K (китайская топ-модель)
+- **Seedance 2.0** — ByteDance
+- **Happy Horse 1.0** — Alibaba
+- **Hailuo 2.3** — MiniMax
+
+Подробное описание каждой — [createya.ai/knowledge](https://createya.ai/knowledge).
+`;
+  await writeFile(path.join(MODELS_DIR, 'index.md'), stub, 'utf8');
+}
+
 async function main() {
   const models = await fetchModels();
+
+  // Если API закрыт — генерим только заглушку
+  if (!models) {
+    await ensureMinimumIndex();
+    console.log('\nDone. Models index stub created (API закрыт пока).');
+    return;
+  }
+
   const filtered = models.filter(m => ['image', 'video'].includes(m.output_type));
 
   if (!existsSync(MODELS_DIR)) await mkdir(MODELS_DIR, { recursive: true });
@@ -203,6 +268,7 @@ async function main() {
     console.log(`  ✓ ${slug}`);
   }
 
+  await ensureMinimumIndex();
   console.log(`\nDone. ${filtered.length} model pages in ${MODELS_DIR}/`);
 }
 

@@ -2,69 +2,42 @@
 
 Публичная документация Createya API — [docs.createya.ai](https://docs.createya.ai).
 
-Стек: **Astro Starlight** + Tailwind. Static build → деплой на PROD VM nginx.
+Стек: **VitePress** (Vue ecosystem). Static build → деплой на PROD VM nginx.
 
 ## Локальная разработка
 
 ```bash
 npm install
-npm run dev
-# → http://localhost:4321
+npm run dev   # → http://localhost:5173
+npm run build # → ./.vitepress/dist/
 ```
 
 ## Структура
 
 ```
-src/content/docs/
-├── index.mdx                 # Hero + overview
+.
+├── index.md                  # Hero
 ├── quickstart.md             # 60-секундный старт
 ├── authentication.md         # API ключи, Bearer
-├── api/
-│   ├── rest.md               # Reference overview
-│   ├── run.md                # POST /v1/run
-│   ├── models.md             # GET /v1/models
-│   └── ...
-├── mcp/
-│   ├── overview.md           # Обзор MCP
-│   ├── claude-desktop.md
-│   ├── cursor.md
-│   └── ...
-├── models/                   # ★ AUTO-GEN еженедельно из /v1/models
-│   ├── flux-2.mdx
-│   ├── sora-2.mdx
-│   └── ... (все image+video)
-└── use-cases/
-    ├── text-to-image.md
-    ├── image-to-video.md
-    └── ...
+├── api/rest.md               # REST API reference
+├── models/                   # ★ AUTO-GEN еженедельно
+├── .vitepress/
+│   ├── config.mjs            # Sidebar, nav, brand
+│   └── theme/brand.css       # Цвета createya.ai
+├── .github/workflows/
+│   └── deploy.yml            # Build + sync + rsync на PROD VM
+└── scripts/sync-models.mjs   # /v1/models → md pages
 ```
 
 ## Auto-sync моделей
 
 Каждый понедельник 09:00 UTC GitHub Action:
-
 1. Дёргает `GET https://api.createya.ai/v1/models`
-2. Запускает `scripts/sync-models.mjs`
-3. Генерит `src/content/docs/models/<slug>.mdx` для каждой image+video модели
-4. Коммитит изменения если что-то поменялось
-5. Билдит сайт
-6. Rsync на PROD VM
+2. Генерит `models/<slug>.md` для каждой image+video модели
+3. Билдит сайт → rsync на PROD VM
 
 Триггер по запросу: GitHub Actions → **Build & deploy docs.createya.ai** → **Run workflow**.
 
-## Deploy
+## License
 
-PROD VM `158.160.200.216`:
-- nginx serve `/var/www/docs.createya.ai/` на `docs.createya.ai`
-- Let's Encrypt сертификат через certbot
-- Static files (~50MB built site)
-
-## Бренд
-
-- Тёмная тема (как `createya.ai`)
-- Цвет: `hsl(189 95% 43%)` ≈ #0ec0d8 (cyan)
-- Background: `hsl(220 20% 6%)` ≈ #0c0e12
-
-## Лицензия
-
-MIT — см. [LICENSE](LICENSE).
+MIT
