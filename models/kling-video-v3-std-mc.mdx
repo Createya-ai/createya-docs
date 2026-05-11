@@ -1,15 +1,15 @@
 ---
-title: O3 pro
-description: O3 pro. Генерация через Createya API — без VPN, оплата в рублях. AI генерация изображений, AI генерация видео, без VPN, в рублях.
+title: V3 pro
+description: V3 pro. Генерация через Createya API — без VPN, оплата в рублях. AI генерация изображений, AI генерация видео, без VPN, в рублях.
 sidebar:
-  label: O3 pro
+  label: V3 pro
 ---
 
-# O3 pro
+# V3 pro
 
-> O3 pro
+> V3 pro
 
-**Стоимость:** 70 кредитов / запрос (14кр/сек · 3–15 сек).
+**Стоимость:** 16 кредитов / запрос (16кр/input_video_duration_seconds · 1–15 input_video_duration_seconds).
 
 **Family slug:** `kling` · **Output:** video · **Mode:** sync
 
@@ -24,7 +24,7 @@ curl -X POST https://api.createya.ai/v1/run \
   -H "Authorization: Bearer $CREATEYA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "kling-video-o3-pro-i2v",
+    "model": "kling-video-v3-std-mc",
     "input": {
       "prompt": "your prompt"
     }
@@ -39,7 +39,7 @@ KEY = os.environ["CREATEYA_API_KEY"]
 r = requests.post(
     "https://api.createya.ai/v1/run",
     headers={"Authorization": f"Bearer {KEY}"},
-    json={"model": "kling-video-o3-pro-i2v", "input": {"prompt": "your prompt"}}
+    json={"model": "kling-video-v3-std-mc", "input": {"prompt": "your prompt"}}
 )
 print(r.json())
 ```
@@ -54,7 +54,7 @@ const r = await fetch("https://api.createya.ai/v1/run", {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    model: "kling-video-o3-pro-i2v",
+    model: "kling-video-v3-std-mc",
     input: { prompt: "your prompt" }
   })
 });
@@ -66,10 +66,8 @@ console.log(await r.json());
 | Параметр | Тип | Required | Описание |
 |---|---|---|---|
 | `prompt` | string | ✓ | Текстовое описание желаемого результата. Обязательный параметр. |
-| `duration` | enum |  | Длительность видео в секундах (3-15с). |
-| `generate_audio` | boolean |  | Нужно ли создавать оригинальное аудио для видео. |
-| `multi_prompt` | array |  | Список промптов для многокадровой генерации видео. |
-| `shot_type` | string |  | Тип многокадровой генерации видео. |
+| `character_orientation` | enum | ✓ | Определяет, соответствует ли ориентация персонажа в результате исходному изображению или видео. «video»: ориентация соответствует исходному видео — лучше для сложных движений (макс. 30s). «image»: ориентация соответствует исходному изображению — лучше для следования за движениями камеры (макс. 10s). |
+| `keep_original_sound` | boolean |  | Нужно ли сохранять оригинальную звуковую дорожку из исходного видео. |
 
 ## Похожие модели
 
@@ -79,7 +77,7 @@ console.log(await r.json());
 
 ```
 createya:run_model({
-  model: "kling-video-o3-pro-i2v",
+  model: "kling-video-v3-std-mc",
   input: { prompt: "your prompt" }
 })
 ```

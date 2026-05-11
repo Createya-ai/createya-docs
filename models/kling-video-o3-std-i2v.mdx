@@ -1,17 +1,17 @@
 ---
-title: v2.3
-description: v2.3. Генерация через Createya API — без VPN, оплата в рублях. AI генерация изображений, AI генерация видео, без VPN, в рублях.
+title: O3 pro
+description: O3 pro. Генерация через Createya API — без VPN, оплата в рублях. AI генерация изображений, AI генерация видео, без VPN, в рублях.
 sidebar:
-  label: v2.3
+  label: O3 pro
 ---
 
-# v2.3
+# O3 pro
 
-> v2.3
+> O3 pro
 
-**Стоимость:** 59 кредитов / запрос (59 кредитов за запрос).
+**Стоимость:** 55 кредитов / запрос (11кр/сек · 3–15 сек).
 
-**Family slug:** `hailuo` · **Output:** video · **Mode:** sync
+**Family slug:** `kling` · **Output:** video · **Mode:** sync
 
 
 
@@ -24,7 +24,7 @@ curl -X POST https://api.createya.ai/v1/run \
   -H "Authorization: Bearer $CREATEYA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "hailuo-2.3-pro-i2v",
+    "model": "kling-video-o3-std-i2v",
     "input": {
       "prompt": "your prompt"
     }
@@ -39,7 +39,7 @@ KEY = os.environ["CREATEYA_API_KEY"]
 r = requests.post(
     "https://api.createya.ai/v1/run",
     headers={"Authorization": f"Bearer {KEY}"},
-    json={"model": "hailuo-2.3-pro-i2v", "input": {"prompt": "your prompt"}}
+    json={"model": "kling-video-o3-std-i2v", "input": {"prompt": "your prompt"}}
 )
 print(r.json())
 ```
@@ -54,7 +54,7 @@ const r = await fetch("https://api.createya.ai/v1/run", {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    model: "hailuo-2.3-pro-i2v",
+    model: "kling-video-o3-std-i2v",
     input: { prompt: "your prompt" }
   })
 });
@@ -65,8 +65,11 @@ console.log(await r.json());
 
 | Параметр | Тип | Required | Описание |
 |---|---|---|---|
-| `prompt` | string | ✓ | Текстовое описание желаемого результата. Обязательный параметр. |
-| `prompt_optimizer` | boolean |  | Использовать ли встроенный оптимизатор промптов модели |
+| `prompt` | string |  | Текстовое описание желаемого результата. Опционально. |
+| `duration` | enum |  | Длительность видео в секундах (3-15с). |
+| `generate_audio` | boolean |  | Нужно ли генерировать нативное аудио для видео. |
+| `multi_prompt` | array |  | Список промптов для многокадровой генерации видео. |
+| `shot_type` | string |  | Тип многокадровой генерации видео. |
 
 ## Похожие модели
 
@@ -76,7 +79,7 @@ console.log(await r.json());
 
 ```
 createya:run_model({
-  model: "hailuo-2.3-pro-i2v",
+  model: "kling-video-o3-std-i2v",
   input: { prompt: "your prompt" }
 })
 ```

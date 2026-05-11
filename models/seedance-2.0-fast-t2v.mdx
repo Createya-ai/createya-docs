@@ -9,7 +9,7 @@ sidebar:
 
 > v2.0
 
-**Стоимость:** 296 кредитов / запрос (37кр/сек · 4–15 сек).
+**Стоимость:** 240 кредитов / запрос (30кр/сек · 4–15 сек).
 
 **Family slug:** `seedance` · **Output:** video · **Mode:** sync
 
@@ -24,7 +24,7 @@ curl -X POST https://api.createya.ai/v1/run \
   -H "Authorization: Bearer $CREATEYA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "seedance-2.0-t2v",
+    "model": "seedance-2.0-fast-t2v",
     "input": {
       "prompt": "your prompt"
     }
@@ -39,7 +39,7 @@ KEY = os.environ["CREATEYA_API_KEY"]
 r = requests.post(
     "https://api.createya.ai/v1/run",
     headers={"Authorization": f"Bearer {KEY}"},
-    json={"model": "seedance-2.0-t2v", "input": {"prompt": "your prompt"}}
+    json={"model": "seedance-2.0-fast-t2v", "input": {"prompt": "your prompt"}}
 )
 print(r.json())
 ```
@@ -54,7 +54,7 @@ const r = await fetch("https://api.createya.ai/v1/run", {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    model: "seedance-2.0-t2v",
+    model: "seedance-2.0-fast-t2v",
     input: { prompt: "your prompt" }
   })
 });
@@ -67,8 +67,8 @@ console.log(await r.json());
 |---|---|---|---|
 | `prompt` | string |  | Текстовое описание желаемого результата. Опционально. |
 | `resolution` | enum |  | Разрешение видео: 480p для быстрой генерации, 720p для баланса. |
-| `duration` | enum |  | Длительность видео в секундах. Поддерживается от 4 до 15 секунд или «Авто», чтобы модель определила длительность на основе промпта. |
-| `aspect_ratio` | enum |  | Соотношение сторон генерируемого видео. Используйте 16:9 для горизонтального формата, 9:16 для вертикального, 1:1 для квадратного, 21:9 для ультраширокого киноформата или «Авто», чтобы модель выбрала сама. |
+| `duration` | enum |  | Длительность видео в секундах. Поддерживается от 4 до 15 секунд или auto, чтобы модель определила длительность на основе промпта. |
+| `aspect_ratio` | enum |  | Соотношение сторон генерируемого видео. Используйте 16:9 для горизонтального формата, 9:16 для вертикального, 1:1 для квадратного, 21:9 для ультраширокого киноформата или auto, чтобы модель выбрала сама. |
 | `generate_audio` | boolean |  | Нужно ли генерировать синхронизированное аудио для видео, включая звуковые эффекты, фоновые звуки и синхронизацию губ (lip-sync). Стоимость генерации видео одинакова независимо от наличия аудио. |
 | `seed` | integer |  | Случайное число (seed) для воспроизводимости. Обратите внимание, что результаты могут незначительно отличаться даже при одинаковом значении seed. |
 | `end_user_id` | string |  | Уникальный идентификатор конечного пользователя. |
@@ -81,7 +81,7 @@ console.log(await r.json());
 
 ```
 createya:run_model({
-  model: "seedance-2.0-t2v",
+  model: "seedance-2.0-fast-t2v",
   input: { prompt: "your prompt" }
 })
 ```

@@ -24,7 +24,7 @@ curl -X POST https://api.createya.ai/v1/run \
   -H "Authorization: Bearer $CREATEYA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "seedream-v5-lite-t2i",
+    "model": "seedream-v5-lite-i2i",
     "input": {
       "prompt": "your prompt"
     }
@@ -39,7 +39,7 @@ KEY = os.environ["CREATEYA_API_KEY"]
 r = requests.post(
     "https://api.createya.ai/v1/run",
     headers={"Authorization": f"Bearer {KEY}"},
-    json={"model": "seedream-v5-lite-t2i", "input": {"prompt": "your prompt"}}
+    json={"model": "seedream-v5-lite-i2i", "input": {"prompt": "your prompt"}}
 )
 print(r.json())
 ```
@@ -54,7 +54,7 @@ const r = await fetch("https://api.createya.ai/v1/run", {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    model: "seedream-v5-lite-t2i",
+    model: "seedream-v5-lite-i2i",
     input: { prompt: "your prompt" }
   })
 });
@@ -66,12 +66,12 @@ console.log(await r.json());
 | Параметр | Тип | Required | Описание |
 |---|---|---|---|
 | `prompt` | string | ✓ | Текстовое описание желаемого результата. Обязательный параметр. |
-| `num_images` | integer |  | Количество отдельных генераций модели, которые будут запущены с данным промптом. |
-| `image_size` | enum |  | Размер генерируемого изображения. Общее количество пикселей должно быть в диапазоне от 2560x1440 до 3072x3072. Если размер изображения не входит в эти параметры, он будет скорректирован путем масштабирования. |
+| `num_images` | integer |  | Количество отдельных генераций модели, запускаемых по промпту. |
+| `image_size` | enum |  | Размер генерируемого изображения. Общее количество пикселей должно быть в диапазоне от 2560x1440 до 3072x3072. Если размер изображения не соответствует этим параметрам, он будет скорректирован путем масштабирования. |
 | `width` | integer |  | Ширина изображения в пикселях |
 | `height` | integer |  | Высота изображения в пикселях |
+| `max_images` | integer |  | Если значение больше единицы, включается генерация нескольких изображений. Модель может возвращать до `max_images` изображений за каждую генерацию, и всего будет выполнено `num_images` генераций. Общее количество созданных изображений составит от `num_images` до `max_images*num_images`. |
 | `enable_safety_checker` | boolean |  | Если выбрано значение true, фильтр безопасности будет включен. |
-| `max_images` | integer |  | Если установлено число больше единицы, включается генерация нескольких изображений. Модель может возвращать до `max_images` изображений за каждую генерацию, и всего будет выполнено `num_images` генераций. Общее количество созданных изображений составит от `num_images` до `max_images*num_images`. |
 
 ## Похожие модели
 
@@ -81,7 +81,7 @@ console.log(await r.json());
 
 ```
 createya:run_model({
-  model: "seedream-v5-lite-t2i",
+  model: "seedream-v5-lite-i2i",
   input: { prompt: "your prompt" }
 })
 ```
