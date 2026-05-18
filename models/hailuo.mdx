@@ -1,17 +1,17 @@
 ---
-title: 2.0
-description: 2.0. Генерация через Createya API — без VPN, оплата в рублях. AI генерация изображений, AI генерация видео, без VPN, в рублях.
+title: v2.3
+description: v2.3. Генерация через Createya API — без VPN, оплата в рублях. AI генерация изображений, AI генерация видео, без VPN, в рублях.
 sidebar:
-  label: 2.0
+  label: v2.3
 ---
 
-# 2.0
+# v2.3
 
-> 2.0
+> v2.3
 
 
 
-**Family slug:** `gpt` · **Output:** image · **Mode:** sync
+**Family slug:** `hailuo` · **Output:** video · **Mode:** sync
 
 
 
@@ -24,7 +24,7 @@ curl -X POST https://api.createya.ai/v1/run \
   -H "Authorization: Bearer $CREATEYA_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "gpt-image-2",
+    "model": "hailuo",
     "input": {
       "prompt": "your prompt"
     }
@@ -39,7 +39,7 @@ KEY = os.environ["CREATEYA_API_KEY"]
 r = requests.post(
     "https://api.createya.ai/v1/run",
     headers={"Authorization": f"Bearer {KEY}"},
-    json={"model": "gpt-image-2", "input": {"prompt": "your prompt"}}
+    json={"model": "hailuo", "input": {"prompt": "your prompt"}}
 )
 print(r.json())
 ```
@@ -54,7 +54,7 @@ const r = await fetch("https://api.createya.ai/v1/run", {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    model: "gpt-image-2",
+    model: "hailuo",
     input: { prompt: "your prompt" }
   })
 });
@@ -73,7 +73,7 @@ console.log(await r.json());
 
 ```
 createya:run_model({
-  model: "gpt-image-2",
+  model: "hailuo",
   input: { prompt: "your prompt" }
 })
 ```
