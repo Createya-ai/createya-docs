@@ -28,6 +28,11 @@ jobs:
       group: deploy-docs
       cancel-in-progress: false
 
+    env:
+      # Актуальный PROD-хост (всё-в-одном: Supabase + фронт + docs).
+      # При переезде менять ЗДЕСЬ, в одном месте.
+      PROD_HOST: 80.66.81.59
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -72,16 +77,37 @@ jobs:
       - name: Add VM to known_hosts
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H 158.160.180.43 >> ~/.ssh/known_hosts
+          ssh-keyscan -H "$PROD_HOST" >> ~/.ssh/known_hosts
 
+      # CRE 2026-09-19: было 158.160.180.43 — фронтовая VM, выведенная из
+      # эксплуатации при переезде PROD. Каждый деплой с тех пор уезжал в никуда,
+      # /var/www/docs.createya.ai на живом хосте оставался пустым, сайт отдавал
+      # 404, а серт docs.createya.ai не мог продлиться (webroot отсутствовал) и
+      # протух 2026-07-28. Workflow при этом был зелёным — см. Verify ниже.
       - name: Rsync built site to PROD VM
         run: |
           rsync -avz --delete \
+            --exclude '.well-known' \
             ./.vitepress/dist/ \
-            createya@158.160.180.43:/var/www/docs.createya.ai/
+            "createya@$PROD_HOST:/var/www/docs.createya.ai/"
 
+      # --exclude '.well-known' обязателен: там лежит webroot ACME-челленджа
+      # (certbot пишет в /var/www/docs.createya.ai/.well-known/acme-challenge),
+      # и --delete без исключения снёс бы его вместе с продлением серта.
+
+      # CRE 2026-09-19: раньше здесь был `curl -sI | head -3` без проверки кода
+      # ответа — шаг проходил всегда, даже когда сайт отдавал 404 с пустого
+      # каталога. Теперь падаем, если главная не 200.
       - name: Verify deploy
         run: |
-          sleep 2
-          curl -sI https://docs.createya.ai/ | head -3
+          sleep 3
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://docs.createya.ai/)
+          echo "GET https://docs.createya.ai/ -> $code"
+          if [ "$code" != "200" ]; then
+            echo "::error::docs.createya.ai отдаёт $code вместо 200 — деплой не доехал"
+            exit 1
+          fi
+          # Серт тоже проверяем: истёкший серт ломает сайт так же надёжно.
+          curl -sS -o /dev/null --max-time 20 https://docs.createya.ai/ \
+            || { echo "::error::TLS-проверка не прошла (возможно, просрочен сертификат)"; exit 1; }
           echo "✓ Deploy complete: https://docs.createya.ai/"
